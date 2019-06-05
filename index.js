@@ -1,6 +1,7 @@
 const axios = require('axios')
 const config = require('./config.json')
 const sendMail = require('./src/mail')
+const schedule = require('node-schedule');
 
 const getHeight = async function () {
     const info = await axios.post(config.my_rpc, {
@@ -34,14 +35,19 @@ const getbestNumber = async function () {
     return bestNumber
 }
 
-Promise.all([getHeight(), getbestNumber(), getOfficalHeight()]).then(([height, bestNumber, offical]) => {
-    console.log({ height, bestNumber, offical })
-    const target = bestNumber > offical ? bestNumber : offical
-    if (height < target - config.alert_gap) {
-        //alert
-        console.log("send mail")
-        sendMail("chainx node problem!", JSON.stringify({ height, bestNumber, offical }))
-    }
-}).catch(err => {
-    console.error(err)
-})
+// check every minute
+console.log(`start moniting chainx node : ${config.my_rpc}`)
+schedule.scheduleJob('0 * * * * *', function () {
+    console.log(`now: ${new Date()}`)
+    Promise.all([getHeight(), getbestNumber(), getOfficalHeight()]).then(([height, bestNumber, offical]) => {
+        console.log({ height, bestNumber, offical })
+        const target = bestNumber > offical ? bestNumber : offical
+        if (height < target - config.alert_gap) {
+            //alert
+            console.log("send mail")
+            sendMail("chainx node problem!", JSON.stringify({ height, bestNumber, offical }))
+        }
+    }).catch(err => {
+        console.error(err)
+    })
+});
