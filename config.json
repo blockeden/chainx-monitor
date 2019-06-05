@@ -1,0 +1,13 @@
+{
+    "my_rpc": "http://x.x.x.x:8086",
+    "offical_rpc": "https://api.chainx.org",
+    "alert_gap": 20,
+    "email": {
+        "user": "x@x.x",
+        "password": "",
+        "host": "smtp.x.x.x",
+        "ssl": true,
+        "from": "x@x.x",
+        "to": "x@x.x"
+    }
+}

@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+yarn.lock
+package-lock.json
+build
+key
+config/lock
+config/store
+logs
+src/keyConfig.js
+.vscode/launch.json
