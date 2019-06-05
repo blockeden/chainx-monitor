@@ -35,6 +35,7 @@ const getbestNumber = async function () {
     return bestNumber
 }
 
+let lastHeight = 0
 // check every minute
 console.log(`start moniting chainx node : ${config.my_rpc}`)
 schedule.scheduleJob('0 * * * * *', function () {
@@ -42,11 +43,12 @@ schedule.scheduleJob('0 * * * * *', function () {
     Promise.all([getHeight(), getbestNumber(), getOfficalHeight()]).then(([height, bestNumber, offical]) => {
         console.log({ height, bestNumber, offical })
         const target = bestNumber > offical ? bestNumber : offical
-        if (height < target - config.alert_gap) {
+        if (height < target - config.alert_gap || height == lastHeight) {
             //alert
             console.log("send mail")
             sendMail("chainx node problem!", JSON.stringify({ height, bestNumber, offical }))
         }
+        lastHeight = height
     }).catch(err => {
         console.error(err)
     })
